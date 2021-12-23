@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-form :rules ="rules" ref="form" :model="loginForm" class="loginContainer">
+    <el-form :rules="rules" ref="loginForm" :model="loginForm" class="loginContainer">
       <h3 class="loginTitile">系统登陆</h3>
       <el-form-item prop="username">
         <el-input type="text" auto-complete="false" v-model="loginForm.username" placeholder="清除用户名"></el-input>
@@ -27,7 +27,8 @@ export default {
   name: "Login",
   data() {
     return {
-      captchaUrl: '',
+      // captchaUrl: '/captcha?time=' + new Date(),
+      captchaUrl:'',
       loginForm: {
         username: 'admin',
         password: '123',
@@ -43,8 +44,22 @@ export default {
     }
   },
   methods: {
+    // updateCaptcha() {
+      // this.captchaUrl = '/captcha?time=' + new Data();
+    // },
     submitLogin() {
-      alert(1111)
+      this.$refs.loginForm.validate((valid) => {
+        if (valid) {
+          postRequest('/login', this.loginForm).then(resp => {
+            if(resp){
+              this.$router.replace('/home');
+            }
+          })
+        } else {
+          this.$message.error('请输入所有字段');
+          return false;
+        }
+      });
     }
   }
 }
